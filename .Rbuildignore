@@ -4,3 +4,4 @@
 ^\.gitignore$
 ^\.DS_Store$
 ^broadcastPower.Rproj$
+^README\.Rmd$
