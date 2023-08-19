@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 Compute broadcast power and compare with FCC data. 
+[![R-CMD-check](https://github.com/sbgraves237/broadcastPower/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sbgraves237/broadcastPower/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The simplest part of this package is the function `FCCquery`.  That creates a character
