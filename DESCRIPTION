@@ -1,0 +1,21 @@
+Package: broadcastPower
+Title: Compute broadcast power and compare with FCC data
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Gordon", "Elliott", ,
+          email="gelliott@csisc.cc", 
+          role = "aut" ),
+    person("Spencer", "Graves", ,
+          email="spencer.graves@effectivedefense.org", 
+          role = c("aut", "cre") ) )
+Description: 
+    Computes broadcast power from FFTs and compare 
+    with data from the US Federal Communications Commission
+    (FCC).  
+License: MIT + file LICENSE
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
