@@ -1,0 +1,6 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^\.gitignore$
+^\.DS_Store$
+^broadcastPower.Rproj$
