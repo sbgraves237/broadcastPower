@@ -2,8 +2,7 @@
 % Please edit documentation in R/FCCquery.R
 \name{FCCquery}
 \alias{FCCquery}
-\title{Extract data from the FCC Query Broadcast Station Search
-with dist of (lat, lon).}
+\title{Extract from FCC Query Broadcast Station Search}
 \usage{
 FCCquery(
   band = c("FM", "TV", "AM"),
@@ -40,13 +39,103 @@ FCCquery(
 \item{EW}{c('E', 'W', 'e', 'w')}
 }
 \value{
-a data.frame of the table obtained from the FCC website.
+a \code{\link[=data.frame]{data.frame()}} of the table obtained from the FCC website
+with the following attributes:
+\itemize{
+\item{\code{query}}{
+the character string returned by \code{\link[=FCCqueryString]{FCCqueryString()}} and
+used to obtain the resulting \code{\link[=data.frame]{data.frame()}}.
+}
+\item{\code{query_time}}{
+an object of class \code{\link[=proc.time]{proc.time()}} giving the time required
+to extract the information from \code{fcc.gov}.
+}
+\item{\code{entriesWFmtErrors}}{
+a \code{\link[=list]{list()}} of entries in the data returned from \code{fcc.gov}
+with other than the standard 441 fields after \code{\link[=strsplit]{strsplit()}}
+on '|'.  If \code{length(entriesWFmtErrors)} > 0, a warning
+will be issued.  Each element in \code{entriesWFmtErrors}
+corresponds to a row of the \code{\link[=data.frame]{data.frame()}} returned that
+is all \code{NA}s with the name of that element matching the
+row of the returned \code{\link[=data.frame]{data.frame()}}.
+}
+}
+
+The \code{\link[=data.frame]{data.frame()}} returned has the following structure:
+\itemize{
+\item{\code{Call}}{ call letters}
+\item{\code{Channel}}{numeric vector}
+\item{\code{Class}}{
+character vector with values like \verb{C1, D, A, C2, LP1, C3},
+etc.
+}
+\item{\code{Service}}{
+character vector with values like \verb{FM, FS, FX, FL}, etc.
+}
+\item{\verb{Frequency, FrequencyUnits}}{
+numeric and character vectors of the frequency
+and units, respectively, with units being something
+like \code{khz}.
+}
+\item{\code{Status}}{
+character vector of codes like \verb{LIC, CP, STA}, etc.
+}
+\item{\code{City}}{
+character vector of the names of the city in
+or near which the station claims as its home.
+}
+\item{\code{State}}{
+a character vector of state codes, most of not
+all of which will be 2-letters.
+}
+\item{\code{Country}}{
+a character vector of the name of the country,
+e.g., \code{USA}.
+}
+\item{\code{FileNumber}}{
+character vector of the FCC file number for this
+entry.
+}
+\item{FacilityID}{
+character vector of the FCC \code{FacilityID} code.
+}
+\item{\verb{ERP, ERPunits}}{
+\code{ERP} = a numeric vector of FCC approved
+\href{https://duckduckgo.com/?t=h_&q=effective+radiated+power+wikipedia&ia=web}{effective radiated power}
+for that station as a numeric vector and a character vector
+of the units for that station.
+}
+\item{\code{HAAT}}{
+Numeric vector of the
+\href{https://en.wikipedia.org/wiki/Height_above_average_terrain}{height above average terrain}
+}
+\item{\verb{Dist_km, Dist_kmUnits, Dist_mi, Dist_miUnits}}{
+Numeric distances and character units from the reference
+to the station for that entry.  \code{Dist_kmUnits} and
+\code{Dist_miUnit} should all be \code{km} and \code{mi}, respectively.
+If they are not, throw a \code{\link[=warning]{warning()}}.  (These are
+provided in the query returned by \code{fcc.gov} and are
+retained as a data quality check.)
+}
+\item{\code{Azimuth}}{
+Numeric vector of the
+\href{https://en.wikipedia.org/wiki/Azimuth}{horizontal angle from north of the direction of the transmitter from the reference point}.
+}
+\item{\code{Licensee}}{
+Character vector of the name of the Licensee /
+Permittee for that entry.
+}
+}
 }
 \description{
-Extract data from the FCC Query Broadcast Station Search
-with dist of (lat, lon).
+\code{FCCquery} returns a \code{\link[=data.frame]{data.frame()}} of all stations
+broadcasting in \code{band} within \code{dist} km of (lat, lon).
 }
 \examples{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+# These examples have taken over a minute to complete
+# because of long delays in getting a response from 
+# fcc.gov:  
 FCCdat1 <- FCCquery()
 FCCdat2 <- FCCquery(dlat2=38L,
   mlat2=54L, slat2=12+1e-9, NS='N',
@@ -54,4 +143,5 @@ FCCdat2 <- FCCquery(dlat2=38L,
 # test integers for dlat and mlat2
 # and with real numbers, not integers,
 # for slat2 and slon2
+\dontshow{\}) # examplesIf}
 }
