@@ -38,7 +38,7 @@
 #' FCCdat1 <- FCCquery()
 #' print(FCCdat1)
 #'
-#' @export print.FCCquery
+#' @export 
 print.FCCquery <- function(x, 
       file = paste0(deparse(substitute(x)), '.xlsx')){
   XLConnect::writeWorksheetToFile(file, x, 
