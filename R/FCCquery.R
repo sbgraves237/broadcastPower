@@ -253,9 +253,9 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
                       '[16]=', Qi[16], ' for row ', i)
           warning(msg)
           attr(queryDF, 'entriesWFmtErrors') <- 
-            WarnList(msg, QueRtn=Query, variable='all', 
-                     fieldNumInQuery='all', row=i)
-          
+            WarnList(msg, QueRtn=QueLines[[i]], 
+                     variable='ERP, ERPunits', 
+                     fieldNumInQuery=15:16, row=i)
         }
         nQi16 <- nQi16+1
       }
@@ -267,6 +267,10 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
                         'Instead\n[17]=', Qi[17], ';\n', 
                         '[18]=', Qi[18], ' for row ', i)
           warning(msg)
+          attr(queryDF, 'entriesWFmtErrors') <- 
+            WarnList(msg, QueRtn=QueLines[[i]], 
+                     variable='HAAT', 
+                     fieldNumInQuery=17:18, row=i)
         }
         nQi18 <- nQi18+1
       }
