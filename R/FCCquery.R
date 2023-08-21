@@ -123,50 +123,64 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
                      mlat2=0, slat2=0, NS=c('N', 'S'), 
                      dlon2=(-(77+(36/3600))), 
                      mlon2=0, slon2=0, EW=c('E', 'W') ){
-  ##
-  ## 1.  Query 
-  ##  
+##
+## 1.  Create query string
+##  
   Band <- match.arg(band)
   query <- FCCqueryString(band=Band,
-              dist=dist, dlat2=dlat2, mlat2=mlat2, slat2=slat2, NS=NS, 
-              dlon2=dlon2, mlon2=mlon2, slon2=slon2, EW=EW)  
+              dist=dist, dlat2=dlat2, mlat2=mlat2, slat2=slat2, 
+              NS=NS, dlon2=dlon2, mlon2=mlon2, slon2=slon2, EW=EW)  
+##
+## 2.  Define internal functions
+##
+  createQDF <- function(n=0){
+    queryDF <- data.frame(Call=character(n), Channel=numeric(n), 
+                          Class=character(n), Service=character(n), 
+                          Frequency=numeric(n), FrequencyUnits=character(n), 
+                          Status=character(n), City=character(n), 
+                          State=character(n), Country=character(n), 
+                          FileNumber=character(n), FacilityID=character(n), 
+                          ERP=numeric(n), ERPunits=character(n), 
+                          HAAT=numeric(n), 
+                          Dist_km=numeric(n), Dist_kmUnits=character(n), 
+                          Dist_mi=numeric(n), Dist_miUnits=character(n), 
+                          Azimuth=numeric(n), Licensee=character(n) )
+    attr(queryDF, 'query') <- query
+    attr(queryDF, 'query_time') <- et
+    class(queryDF) <- c('FCCquery', 'data.frame')   
+    queryDF
+  }
+  WarnList <- function(msg, QueRtn=QueTxt, variable='all', 
+                       fieldNumInQuery='all', row='all'){
+    list(message=msg, row=row, variable=variable, 
+         fieldNumInQuery=fieldNumInQuery, 
+         QuerySegment=QueRtn)
+  }
+  queryDF <- createQDF()
+##
+## 3.  read_htlm(query)
+##
   st <- proc.time()
 #  QuerTxt <- htm2txt::gettxt(query)
 #  QuerLines <- readLines(query) #timed out; no timout parameter
-  Query <- xml2::read_html(query)
+  Query <- try(xml2::read_html(query))
 #  QuerXML <- XML::readHTMLTable(query)
   et <- (proc.time()-st)
+  if(inherits(Query, 'try-error')){
+    msg <- 'try-error'
+    attr(queryDF, 'entriesWFmtErrors') <- 
+      WarnList(msg, QueRtn=NA, variable='all', 
+            fieldNumInQuery='all', row='all')
+    return(queryDF)    
+  }  
   # following 
 # https://infatica.io/blog/web-scraping-with-r-and-rvest/
 #  Quernodes <- rvest::html_elements(Query)
 #  QuerTxt <- htm2txt::htm2txt(Query)
   QueTxt <- rvest::html_text(Query)
-  createQDF <- function(n=0){
-    queryDF <- data.frame(Call=character(n), Channel=numeric(n), 
-                        Class=character(n), Service=character(n), 
-                        Frequency=numeric(n), FrequencyUnits=character(n), 
-                        Status=character(n), City=character(n), 
-                        State=character(n), Country=character(n), 
-                        FileNumber=character(n), FacilityID=character(n), 
-                        ERP=numeric(n), ERPunits=character(n), 
-                        HAAT=numeric(n), 
-                        Dist_km=numeric(n), Dist_kmUnits=character(n), 
-                        Dist_mi=numeric(n), Dist_miUnits=character(n), 
-                        Azimuth=numeric(n), Licensee=character(n) )
-    attr(queryDF, 'query') <- query
-    attr(queryDF, 'query_time') <- et
-    queryDF
-  }
-  queryDF <- createQDF()
 ## 
-## 2. Response should be a character vector of length 1. Check.
+## 4. Response should be a character vector of length 1. Check.
 ##
-  WarnList <- function(msg, QueRtn=QueTxt, variable='all', 
-                   fieldNumInQuery='all', row='all'){
-    list(message=msg, row=row, variable=variable, 
-         fieldNumInQuery=fieldNumInQuery, 
-         QuerySegment=QueRtn)
-  }
   if((lenQT <- length(QueTxt))>1){
     msg <- paste0('PROBLEM: ', 
         'html_text(read_html(query)) is a list of length ', 
@@ -189,7 +203,7 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
     return(queryDF)
   }
 ## 
-## 3.  Lines shoud be  separated by \n and fields by |.
+## 5.  Lines shoud be  separated by \n and fields by |.
 ##  
   QueLines <- strsplit(QueTxt, '\n')[[1]]
   nQue <- length(QueLines)
@@ -206,13 +220,13 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
     warning(msg)
   }
 ## 
-## 4.  Fill queryDF where length(QueTbl[[i]])=41
+## 6.  Fill queryDF where length(QueTbl[[i]])=41
 ##
   queryDF <- createQDF(nQue)
   nQi1 <- 0
   nQi16 <- 0
   nQi18 <- 0
-  entriesWFmtErrors <- character(nQue)
+  entriesWFmtErrors <- vector('list', nQue)
   for(i in 1:nQue){
     iGood <- FALSE
     if(QueTn[i] == 39){
@@ -222,7 +236,7 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
         iGood <- FALSE
         msg <- paste0('Row ', i, ' should start with a blank.', 
                       ' Instead:', Qi[1])
-        attr(queryDF, 'entriesWFmtErrors') <- 
+        entriesWFmtErrors[[i]] <- 
           WarnList(msg, QueRtn=QueLines[[i]], variable='all', 
                    fieldNumInQuery='all', row=i)
         if(nQi1<1){
@@ -247,30 +261,30 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
       queryDF[i, 'ERPunits'] <- utils::tail(ERP., 1)
       if(Qi[15] != Qi[16]){
         iGood <- FALSE
-        if(nQi16<1){
-          msg <- paste0('Fields 15 and 16 should both equal freq. ',
+        msg <- paste0('Fields 15 and 16 should both equal freq. ',
                       'Instead\n[15]=', Qi[15], ';\n', 
                       '[16]=', Qi[16], ' for row ', i)
+        entriesWFmtErrors[[i]] <- 
+          WarnList(msg, QueRtn=QueLines[[i]], 
+                   variable='ERP, ERPunits', 
+                   fieldNumInQuery=15:16, row=i)
+        if(nQi16<1){
           warning(msg)
-          attr(queryDF, 'entriesWFmtErrors') <- 
-            WarnList(msg, QueRtn=QueLines[[i]], 
-                     variable='ERP, ERPunits', 
-                     fieldNumInQuery=15:16, row=i)
         }
         nQi16 <- nQi16+1
       }
       queryDF[i, 'HAAT'] <- as.numeric(Qi[17])
       if(Qi[17] != Qi[18]){
         iGood <- FALSE
-        if(nQi18<1){
-          msg <- paste0('Fields 17 and 18 should both equal HAAT. ',
+        msg <- paste0('Fields 17 and 18 should both equal HAAT. ',
                         'Instead\n[17]=', Qi[17], ';\n', 
                         '[18]=', Qi[18], ' for row ', i)
-          warning(msg)
-          attr(queryDF, 'entriesWFmtErrors') <- 
-            WarnList(msg, QueRtn=QueLines[[i]], 
-                     variable='HAAT', 
-                     fieldNumInQuery=17:18, row=i)
+        entriesWFmtErrors[[i]] <- 
+          WarnList(msg, QueRtn=QueLines[[i]], 
+                   variable='HAAT', 
+                   fieldNumInQuery=17:18, row=i)
+        if(nQi18<1){
+            warning(msg)
         }
         nQi18 <- nQi18+1
       }
@@ -293,7 +307,9 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
       Azmth <- strsplit(Qi[31], ' ')[[1]]
       queryDF[i, 'Azimuth'] <- as.numeric(Azmth[1])
     }
-    if(!iGood)entriesWFmtErrors[i] <- QueLines[i]
+    if((!iGood) && is.null(entriesWFmtErrors[[i]])){
+        entriesWFmtErrors[[i]] <- QueLines[i]
+    }
   }
   NentriesWFmtE <- which(entriesWFmtErrors!='')
   if(length(NentriesWFmtE)>0){
@@ -303,9 +319,8 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
   } else {
     attr(queryDF, 'entriesWFmtErrors') <- 'No parsing problems detected.'
   }
-  class(queryDF) <- c('FCCquery', 'data.frame')   
-  ##
-  ## 4.  Return
-  ##
+##
+## 7.  Return
+##
   queryDF
 }
