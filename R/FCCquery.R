@@ -156,6 +156,7 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
     attr(queryDF, 'query_time') <- et
     queryDF
   }
+  queryDF <- createQDF()
 ## 
 ## 2. Response should be a character vector of length 1. Check.
 ##
@@ -196,8 +197,9 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
     warning(msg)
   }
 ## 
-## 4.  Fill querDF where length(Quetbl[[i]])=41
+## 4.  Fill queryDF where length(QueTbl[[i]])=41
 ##
+  queryDF <- createQDF(nQue)
   nQi1 <- 0
   nQi16 <- 0
   nQi18 <- 0
