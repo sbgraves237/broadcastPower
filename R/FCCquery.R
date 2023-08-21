@@ -134,7 +134,7 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
 #  QuerLines <- readLines(query) #timed out; no timout parameter
   Query <- xml2::read_html(query)
 #  QuerXML <- XML::readHTMLTable(query)
-  et <- (proc.time())
+  et <- (proc.time()-st)
   # following 
 # https://infatica.io/blog/web-scraping-with-r-and-rvest/
 #  Quernodes <- rvest::html_elements(Query)
@@ -274,8 +274,11 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
     }
     if(!iGood)entriesWFmtErrors[i] <- QueLines[i]
   }
-  if(any(entriesWFmtErrors!='')){
+  NentriesWFmtE <- which(entriesWFmtErrors!='')
+  if(length(NentriesWFmtE)>0){
     attr(queryDF, 'entriesWFmtErrors') <- entriesWFmtErrors
+    warning('entries with formatting errors =', 
+            paste(NentriesWFmtE, collapse=', '))
   } else {
     attr(queryDF, 'entriesWFmtErrors') <- 'No parsing problems detected.'
   }
