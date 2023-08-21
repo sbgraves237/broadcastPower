@@ -14,7 +14,8 @@
 #' @param slon2 seconds longitude
 #' @param EW c('E', 'W', 'e', 'w')
 #'
-#' @return a [data.frame()] of the table obtained from the FCC website
+#' @return an object of class `c(FCCquery, data.frame)` 
+#' of the table obtained from the FCC website
 #' with the following attributes:
 #' \itemize{
 #'   \item{`query`}{
@@ -282,6 +283,7 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
   } else {
     attr(queryDF, 'entriesWFmtErrors') <- 'No parsing problems detected.'
   }
+  class(queryDF) <- c('FCCquery', 'data.frame')   
   ##
   ## 4.  Return
   ##
