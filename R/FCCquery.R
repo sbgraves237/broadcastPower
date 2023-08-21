@@ -261,7 +261,7 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
       queryDF[i, 'ERPunits'] <- utils::tail(ERP., 1)
       if(Qi[15] != Qi[16]){
         iGood <- FALSE
-        msg <- paste0('Fields 15 and 16 should both equal freq. ',
+        msg <- paste0('Fields 15 and 16 should both equal ERP. ',
                       'Instead\n[15]=', Qi[15], ';\n', 
                       '[16]=', Qi[16], ' for row ', i)
         entriesWFmtErrors[[i]] <- 
