@@ -39,7 +39,8 @@ FCCquery(
 \item{EW}{c('E', 'W', 'e', 'w')}
 }
 \value{
-a \code{\link[=data.frame]{data.frame()}} of the table obtained from the FCC website
+an object of class \code{c(FCCquery, data.frame)}
+of the table obtained from the FCC website
 with the following attributes:
 \itemize{
 \item{\code{query}}{
