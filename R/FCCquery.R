@@ -156,7 +156,6 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
          fieldNumInQuery=fieldNumInQuery, 
          QuerySegment=QueRtn)
   }
-  queryDF <- createQDF()
 ##
 ## 3.  read_htlm(query)
 ##
@@ -166,6 +165,7 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
   Query <- try(xml2::read_html(query))
 #  QuerXML <- XML::readHTMLTable(query)
   et <- (proc.time()-st)
+  queryDF <- createQDF()
   if(inherits(Query, 'try-error')){
     msg <- 'try-error'
     attr(queryDF, 'entriesWFmtErrors') <- 
