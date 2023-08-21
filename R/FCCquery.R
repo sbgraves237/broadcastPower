@@ -161,6 +161,12 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
 ## 
 ## 2. Response should be a character vector of length 1. Check.
 ##
+  WarnList <- function(msg, QueRtn=QueTxt, variable='all', 
+                   fieldNumInQuery='all', row='all'){
+    list(message=msg, row=row, variable=variable, 
+         fieldNumInQuery=fieldNumInQuery, 
+         QuerySegment=QueRtn)
+  }
   if((lenQT <- length(QueTxt))>1){
     msg <- paste0('PROBLEM: ', 
         'html_text(read_html(query)) is a list of length ', 
@@ -168,7 +174,8 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
         'Returning an empty data.frame with the ', 
         'response as attribute "entriesWFmtErrors".')
     warning(msg)
-    attr(queryDF, 'entriesWFmtErrors') <- Query
+    attr(queryDF, 'entriesWFmtErrors') <- 
+          WarnList(msg)
     return(queryDF)
   } 
   if(lenQT<1){
@@ -177,7 +184,8 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
                   ' Returning an empty data.frame with the ', 
                   'response as attribute "entriesWFmtErrors".')
     warning(msg)
-    attr(queryDF, 'entriesWFmtErrors') <- Query
+    attr(queryDF, 'entriesWFmtErrors') <- 
+          WarnList(msg)
     return(queryDF)
   }
 ## 
@@ -212,9 +220,13 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
       Qi <- trimws(QueTbl[[i]])
       if(Qi[1]!= ''){
         iGood <- FALSE
+        msg <- paste0('Row ', i, ' should start with a blank.', 
+                      ' Instead:', Qi[1])
+        attr(queryDF, 'entriesWFmtErrors') <- 
+          WarnList(msg, QueRtn=QueLines[[i]], variable='all', 
+                   fieldNumInQuery='all', row=i)
         if(nQi1<1){
-          warning('Row ', i, ' should start with a blank. ', 
-                  'instead:', Qi[1])
+          warning(msg)
         }
         nQi1 <- nQi1+1
       }
@@ -240,6 +252,10 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
                       'Instead\n[15]=', Qi[15], ';\n', 
                       '[16]=', Qi[16], ' for row ', i)
           warning(msg)
+          attr(queryDF, 'entriesWFmtErrors') <- 
+            WarnList(msg, QueRtn=Query, variable='all', 
+                     fieldNumInQuery='all', row=i)
+          
         }
         nQi16 <- nQi16+1
       }
