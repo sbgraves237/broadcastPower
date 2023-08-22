@@ -4,12 +4,15 @@
 \alias{print.FCCquery}
 \title{Print method for FCCquery}
 \usage{
-\method{print}{FCCquery}(x, file = paste0(deparse(substitute(x)), ".xlsx"))
+\method{print}{FCCquery}(x, file = paste0(deparse(substitute(x)), ".xlsx"), ...)
 }
 \arguments{
 \item{x}{an object of class \code{FCCquery}}
 
 \item{file}{= paste0(deparse(substitute(x)), '.xlsx')}
+
+\item{...}{other arguments for consistency with
+the generic \code{print} function.  Not used.}
 }
 \value{
 \code{file}
