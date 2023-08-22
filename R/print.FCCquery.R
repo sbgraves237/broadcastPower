@@ -41,15 +41,36 @@
 #' @export 
 print.FCCquery <- function(x, 
       file = paste0(deparse(substitute(x)), '.xlsx')){
+##
+## 1.  Write the data.frame
+##  
   XLConnect::writeWorksheetToFile(file, x, 
                     'data.frame')
+##
+## 2.  Write the query string
+##  
   query <- attr(x, 'query')
   XLConnect::writeWorksheetToFile(file, query, 
                                  'query')
+## 
+## 3.  Write the query time
+##  
   et <- attr(x, 'query_time')
   XLConnect::writeWorksheetToFile(file, et, 
                       'query_time')
+##
+## 4.  Write entriesWFmtErrors,
+##     one tab for each non-null component
+##  
+#  4.1.  Get the list of entries with format errors  
   eWFE <- attr(x, 'entriesWFmtErrors')
+  NeWFE <- length(eWFE)
+#  4.2.  errorRow001, ... errorRow176 
+  
+  
+  names(eWFE) <- 1:NeWFE
+  keWFE <- sapply(eWFE, length)
+  
   XLConnect::writeWorksheetToFile(file, eWFE, 
           'entriesWFmtErrors')
   
