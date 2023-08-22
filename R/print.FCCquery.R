@@ -47,20 +47,56 @@ print.FCCquery <- function(x,
 ##
 ## 1.  Write the data.frame
 ##  
-  XLConnect::writeWorksheetToFile(file, x, 
-                    'data.frame')
+  xNm <- deparse(substitute(x))
+  fileXLC <- paste0(xNm, 'XLConnect.xlsx')
+#  XLConnect::writeWorksheetToFile(fileXLC, x, 'data.frame')
+#  
+  require(openxlsx2)
+#  fileOpen <- paste0(xNm, 'Openxlsx2.xlsx')
+# write_xlsx accepts a named list as it first argument   
+#  write_xlsx(x, fileOpen)
+#  header row is shaded with XLConnect but not with openxlsx2
+#  This ignores the attributes and puts the data in 'Sheet 1'
+#  write_xlsx(x, fileOpen, sheet='data.frame')
+#  Warning: unused arguments (sheet)   
+  X <- list(data.frame=x)
+# openxlsx2 seems to provide more control starting with a "workbook"  
+  xdf <- x
+  class(xdf) <- 'data.frame'
+  wbO2 <- wb_workbook(title=xNm)
+  wbO2$add_worksheet(sheet='data.frame')
+  wbO2$add_data_table(sheet='data.frame', x=xdf,
+                      row_names = TRUE)
+#  wb_save(wbO2, fileOpen) # works but premature
+#
+#  fileO2 <- paste0(xNm, 'Oxlsx2.xlsx')
 ##
 ## 2.  Write the query string
 ##  
   query <- attr(x, 'query')
-  XLConnect::writeWorksheetToFile(file, query, 
-                                 'query')
+  XLConnect::writeWorksheetToFile(fileXLC, query, 'query')
+#  
+#  write_xlsx(list(query=query), fileOpen)
+#  This overwrites the existing fileOpen, 
+#  replacing it with an xlsx file with 
+#  with a single sheet "query"
+  X['query'] <- query
+  wbO2$add_worksheet(sheet='query')
+  wbO2$add_data(sheet='query', x=query)
+#  wb_save(wbO2, fileOpen) # works but premature
 ## 
 ## 3.  Write the query time
 ##  
   et <- attr(x, 'query_time')
-  XLConnect::writeWorksheetToFile(file, et, 
-                      'query_time')
+  XLConnect::writeWorksheetToFile(file, et, 'query_time')
+  X[['query_time']] <- as.data.frame(et)
+#  write_xlsx(X, fileOpen)
+  wbO2$add_worksheet(sheet='query_time')
+  etDF <- as.data.frame(et)
+  names(etDF) <- 'seconds'
+  wbO2$add_data_table(sheet='query_time', x=etDF, 
+                      row_names=TRUE)
+#  wb_save(wbO2, fileOpen) # works but premature
 ##
 ## 4.  Write entriesWFmtErrors,
 ##     one tab for each non-null component
@@ -71,13 +107,17 @@ print.FCCquery <- function(x,
 #  4.2.  errorRow001, ... errorRow176 
   NmEwfe <- names(eWFE)
   for(i in 1:NeWFE){
-    XLConnect::writeWorksheetToFile(file, eWFE[[i]], 
-          NmEwfe[i])
+#    XLConnect::writeWorksheetToFile(file, eWFE[[i]], NmEwfe[i])
+    wbO2$add_worksheet(sheet=NmEwfe[i])
+    UNeWFEi <- unlist(eWFE[[i]])
+    errorRowi <- as.data.frame(UNeWFEi)
+    wbO2$add_data_table(sheet=NmEwfe[i], 
+                x=errorRowi, row_names=TRUE)
   }
 ##
 ## 5.  Done
 ##
-  xNm <- deparse(substitute(x))
+  wb_save(wbO2, file)
   cat('Object ', xNm, 'written to the working directory = ', 
       getwd() )
   invisible(xNm)
