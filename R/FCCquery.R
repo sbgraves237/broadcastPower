@@ -227,6 +227,16 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
   nQi16 <- 0
   nQi18 <- 0
   entriesWFmtErrors <- vector('list', nQue)
+#  6.1.  names = errorRow001 ... errorRow176
+  nDig <- ceiling(log10(nQue))
+  spFmt0 <- paste(rep('0', nDig), collapse='')
+  spFmt1 <- paste0(spFmt0, '%i')
+  eRi <- sprintf(spFmt1, 1:nQue)
+  eRiNch <- nchar(eRi)
+  eRiND <- substring(eRi, eRiNch-nDig+1, eRiNch)
+  eRiNm <- paste0('errorRow', eRiND)
+  names(entriesWFmtErrors) <- eRiNm
+#  6.2.  Process rows one by one.    
   for(i in 1:nQue){
     iGood <- FALSE
     if(QueTn[i] == 39){
