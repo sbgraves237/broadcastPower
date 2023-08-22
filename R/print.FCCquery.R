@@ -71,7 +71,7 @@ print.FCCquery <- function(x,
 #  4.2.  errorRow001, ... errorRow176 
   NmEwfe <- names(eWFE)
   for(i in 1:NeWFE){
-    XLConnect::writeWorksheetToFile(file, eWFE[[e]], 
+    XLConnect::writeWorksheetToFile(file, eWFE[[i]], 
           NmEwfe[i])
   }
 ##
