@@ -321,10 +321,13 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
         entriesWFmtErrors[[i]] <- QueLines[i]
     }
   }
-  NentriesWFmtE <- which(entriesWFmtErrors!='')
-  if(length(NentriesWFmtE)>0){
-    attr(queryDF, 'entriesWFmtErrors') <- entriesWFmtErrors
-    warning('entries with formatting errors =', 
+#  NentriesWFmtE <- which(entriesWFmtErrors!='')
+  entriesNULL <- sapply(entriesWFmtErrors, is.null)
+  NentriesWFmtE <- which(!entriesNULL)
+  if((nEwfe <- length(NentriesWFmtE))>0){
+    attr(queryDF, 'entriesWFmtErrors') <- 
+            entriesWFmtErrors[NentriesWFmtE]
+    warning(nEwfe, ' entries with formatting errors = ', 
             paste(NentriesWFmtE, collapse=', '))
   } else {
     attr(queryDF, 'entriesWFmtErrors') <- 'No parsing problems detected.'
