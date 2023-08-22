@@ -228,7 +228,7 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
   nQi18 <- 0
   entriesWFmtErrors <- vector('list', nQue)
 #  6.1.  names = errorRow001 ... errorRow176
-  nDig <- ceiling(log10(nQue))
+  nDig <- ceiling(log10(nQue+.5))
   spFmt0 <- paste(rep('0', nDig), collapse='')
   spFmt1 <- paste0(spFmt0, '%i')
   eRi <- sprintf(spFmt1, 1:nQue)
