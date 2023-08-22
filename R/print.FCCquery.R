@@ -27,6 +27,8 @@
 #' 
 #' @param x an object of class `FCCquery`
 #' @param file = paste0(deparse(substitute(x)), '.xlsx')
+#' @param ... other arguments for consistency with 
+#'        the generic `print` function.  Not used.   
 #' @return `file`
 #' 
 #' @examplesIf interactive()
@@ -40,7 +42,8 @@
 #'
 #' @export 
 print.FCCquery <- function(x, 
-      file = paste0(deparse(substitute(x)), '.xlsx')){
+      file = paste0(deparse(substitute(x)), '.xlsx'), 
+      ...){
 ##
 ## 1.  Write the data.frame
 ##  
