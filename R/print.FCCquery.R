@@ -69,14 +69,16 @@ print.FCCquery <- function(x,
   eWFE <- attr(x, 'entriesWFmtErrors')
   NeWFE <- length(eWFE)
 #  4.2.  errorRow001, ... errorRow176 
-  
-  
-  names(eWFE) <- 1:NeWFE
-  keWFE <- sapply(eWFE, length)
-  
-  XLConnect::writeWorksheetToFile(file, eWFE, 
-          'entriesWFmtErrors')
-  
-  
-  
+  NmEwfe <- names(eWFE)
+  for(i in 1:NeWFE){
+    XLConnect::writeWorksheetToFile(file, eWFE[[e]], 
+          NmEwfe[i])
+  }
+##
+## 5.  Done
+##
+  xNm <- deparse(substitute(x))
+  cat('Object ', xNm, 'written to the working directory = ', 
+      getwd() )
+  invisible(xNm)
 }
