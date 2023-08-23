@@ -31,6 +31,9 @@
 #'        the generic `print` function.  Not used.   
 #' @return `file`
 #' 
+#' @importFrom openxlsx2 wb_workbook wb_add_worksheet 
+#' @importFrom openxlsx2 wb_add_data_table wb_save
+#' 
 #' @examplesIf interactive()
 #' # These examples have taken over a minute to complete
 #' # because of long delays in getting a response from 
@@ -51,7 +54,7 @@ print.FCCquery <- function(x,
 #  fileXLC <- paste0(xNm, 'XLConnect.xlsx')
 #  XLConnect::writeWorksheetToFile(fileXLC, x, 'data.frame')
 #  
-  require(openxlsx2)
+#  require(openxlsx2)
 #  fileOpen <- paste0(xNm, 'Openxlsx2.xlsx')
 # write_xlsx accepts a named list as it first argument   
 #  write_xlsx(x, fileOpen)
