@@ -48,7 +48,7 @@ print.FCCquery <- function(x,
 ## 1.  Write the data.frame
 ##  
   xNm <- deparse(substitute(x))
-  fileXLC <- paste0(xNm, 'XLConnect.xlsx')
+#  fileXLC <- paste0(xNm, 'XLConnect.xlsx')
 #  XLConnect::writeWorksheetToFile(fileXLC, x, 'data.frame')
 #  
   require(openxlsx2)
@@ -59,11 +59,11 @@ print.FCCquery <- function(x,
 #  This ignores the attributes and puts the data in 'Sheet 1'
 #  write_xlsx(x, fileOpen, sheet='data.frame')
 #  Warning: unused arguments (sheet)   
-  X <- list(data.frame=x)
+#  X <- list(data.frame=x)
 # openxlsx2 seems to provide more control starting with a "workbook"  
   xdf <- x
-  class(xdf) <- 'data.frame'
   wbO2 <- wb_workbook(title=xNm)
+  class(xdf) <- 'data.frame'
   wbO2$add_worksheet(sheet='data.frame')
   wbO2$add_data_table(sheet='data.frame', x=xdf,
                       row_names = TRUE)
@@ -74,13 +74,13 @@ print.FCCquery <- function(x,
 ## 2.  Write the query string
 ##  
   query <- attr(x, 'query')
-  XLConnect::writeWorksheetToFile(fileXLC, query, 'query')
+#  XLConnect::writeWorksheetToFile(fileXLC, query, 'query')
 #  
 #  write_xlsx(list(query=query), fileOpen)
 #  This overwrites the existing fileOpen, 
 #  replacing it with an xlsx file with 
 #  with a single sheet "query"
-  X['query'] <- query
+#  X['query'] <- query
   wbO2$add_worksheet(sheet='query')
   wbO2$add_data(sheet='query', x=query)
 #  wb_save(wbO2, fileOpen) # works but premature
@@ -88,14 +88,14 @@ print.FCCquery <- function(x,
 ## 3.  Write the query time
 ##  
   et <- attr(x, 'query_time')
-  XLConnect::writeWorksheetToFile(file, et, 'query_time')
-  X[['query_time']] <- as.data.frame(et)
+#  XLConnect::writeWorksheetToFile(file, et, 'query_time')
+#  X[['query_time']] <- as.data.frame(et)
 #  write_xlsx(X, fileOpen)
   wbO2$add_worksheet(sheet='query_time')
   etDF <- as.data.frame(et)
   names(etDF) <- 'seconds'
-  wbO2$add_data_table(sheet='query_time', x=etDF, 
-                      row_names=TRUE)
+  wbO2$add_data_table(sheet='query_time', 
+                    x=etDF, row_names=TRUE)
 #  wb_save(wbO2, fileOpen) # works but premature
 ##
 ## 4.  Write entriesWFmtErrors,
