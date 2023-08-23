@@ -3,3 +3,7 @@
 S3method(print,FCCquery)
 export(FCCquery)
 export(FCCqueryString)
+importFrom(openxlsx2,wb_add_data_table)
+importFrom(openxlsx2,wb_add_worksheet)
+importFrom(openxlsx2,wb_save)
+importFrom(openxlsx2,wb_workbook)
