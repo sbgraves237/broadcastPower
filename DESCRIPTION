@@ -22,5 +22,4 @@ RoxygenNote: 7.2.3
 Imports: 
     openxlsx2,
     rvest,
-    XLConnect,
     xml2
