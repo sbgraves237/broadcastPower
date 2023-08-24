@@ -13,6 +13,14 @@
 #' @param mlon2 minutes longitude
 #' @param slon2 seconds longitude
 #' @param EW c('E', 'W', 'e', 'w')
+#' @param Order c('Call', 'ERP', 'Service', 'Dist_km') 
+#' 
+#' @details
+#' `Order` specifies the fields to sort on in returning 
+#' the results.  
+#' 
+#' `ERP` will all be converted to common units if they are 
+#' not all the same. 
 #'
 #' @return an object of class `c(FCCquery, data.frame)` 
 #' of the table obtained from the FCC website
@@ -46,7 +54,9 @@
 #'     etc.
 #'   }
 #'   \item{`Service`}{ 
-#'     character vector with values like `FM, FS, FX, FL`, etc.
+#'     a vactor of class [`ordered`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/factor.html)
+#'     placing `FM, AM`, or `TV` before other values 
+#'     like `FM, FS, FX, FL`, etc.
 #'   }
 #'   \item{`Frequency, FrequencyUnits`}{
 #'     numeric and character vectors of the frequency 
@@ -119,10 +129,10 @@
 #' # for slat2 and slon2
 
 FCCquery <- function(band=c('FM', 'TV', 'AM'), 
-                     dist=80, dlat2=38+((54+(12/60))/60), 
-                     mlat2=0, slat2=0, NS=c('N', 'S'), 
-                     dlon2=(-(77+(36/3600))), 
-                     mlon2=0, slon2=0, EW=c('E', 'W') ){
+        dist=80, dlat2=38+((54+(12/60))/60), mlat2=0, 
+        slat2=0, NS=c('N', 'S'), dlon2=(-(77+(36/3600))), 
+        mlon2=0, slon2=0, EW=c('E', 'W'), 
+        Order=c('Call', 'ERP', 'Service', 'Dist_km') ){
 ##
 ## 1.  Create query string
 ##  
