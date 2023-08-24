@@ -134,6 +134,8 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
         mlon2=0, slon2=0, EW=c('E', 'W'), 
         Order=c('Call', 'ERP', 'Service', 'Dist_km') ){
 ##
+## NOTE: Current code only works for FM, NOT for AM nor TV.    
+##
 ## 1.  Create query string
 ##  
   Band <- match.arg(band)
@@ -343,7 +345,26 @@ FCCquery <- function(band=c('FM', 'TV', 'AM'),
     attr(queryDF, 'entriesWFmtErrors') <- 'No parsing problems detected.'
   }
 ##
-## 7.  Return
+## 7.  Service <- ordered(...)
 ##
-  queryDF
+  ord <- unique(queryDF$Service)
+  FM_TV_AM <- intersect(c('FM', 'TV', 'AM'), ord)
+  ordWoFM <- setdiff(ord, FM_TV_AM)
+  SvcLvls <- c(FM_TV_AM, ordWoFM)
+  Ord <- ordered(queryDF$Service, levels=SvcLvls)
+  queryDF$Service <- Ord
+##
+## 8.  Order 
+##  
+  tst <- (Order %in% names(queryDF))
+  if(any(!tst)){
+    stop('Order includes ', 
+         paste(Order[tst], collapse=', '), 
+         ': NOT in names(outputDataFrame)')
+  }
+  o <- do.call(order, queryDF[Order])
+##
+## 9.  Return
+##
+  queryDF[o, ]
 }
