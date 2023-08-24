@@ -14,7 +14,8 @@ FCCquery(
   dlon2 = (-(77 + (36/3600))),
   mlon2 = 0,
   slon2 = 0,
-  EW = c("E", "W")
+  EW = c("E", "W"),
+  Order = c("Call", "ERP", "Service", "Dist_km")
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ FCCquery(
 \item{slon2}{seconds longitude}
 
 \item{EW}{c('E', 'W', 'e', 'w')}
+
+\item{Order}{c('Call', 'ERP', 'Service', 'Dist_km')}
 }
 \value{
 an object of class \code{c(FCCquery, data.frame)}
@@ -71,7 +74,9 @@ character vector with values like \verb{C1, D, A, C2, LP1, C3},
 etc.
 }
 \item{\code{Service}}{
-character vector with values like \verb{FM, FS, FX, FL}, etc.
+a vactor of class \href{https://stat.ethz.ch/R-manual/R-devel/library/base/html/factor.html}{\code{ordered}}
+placing \verb{FM, AM}, or \code{TV} before other values
+like \verb{FM, FS, FX, FL}, etc.
 }
 \item{\verb{Frequency, FrequencyUnits}}{
 numeric and character vectors of the frequency
@@ -131,6 +136,13 @@ Permittee for that entry.
 \description{
 \code{FCCquery} returns a \code{\link[=data.frame]{data.frame()}} of all stations
 broadcasting in \code{band} within \code{dist} km of (lat, lon).
+}
+\details{
+\code{Order} specifies the fields to sort on in returning
+the results.
+
+\code{ERP} will all be converted to common units if they are
+not all the same.
 }
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
